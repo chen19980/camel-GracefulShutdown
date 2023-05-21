@@ -1,0 +1,85 @@
+camel:
+  servlet:
+    mapping:
+      context-path: /camel/*
+  springboot:
+    main-run-controller: true
+    shutdown-timeout: 5
+    name: TestCamelSaga
+    startup-summary-level: verbose
+
+    route-controller-supervise-enabled: true
+    route-controller-back-off-max-attempts: 3
+
+    jmx-enabled: false
+
+
+    xmlRests: false
+    use-mdc-logging: true
+    # trace
+    tracing: true
+    tracing-standby: true
+    tracing-logging-format: "%-4.4s [%-30.30s] [%-50.50s]"
+  health:
+    enabled: true
+    # full, default, or oneline
+    exposure-level: default
+  component:
+    spring-rabbitmq.auto-declare: false
+
+
+server:
+  port: 9090
+  shutdown: graceful
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+      exclude: static/**,public/**
+    livereload:
+      enabled: true
+
+  application:
+    name: camel-saga
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  jpa:
+    hibernate:
+      ddl-auto: update
+    h2:
+      console:
+        enabled: true
+        path: /h2
+    datasource:
+      url: jdbc:h2:mem:test
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      group:
+        liveness:
+          include: diskSpace,ping
+          show-details: always
+      probes:
+        enabled: true
+
+logging:
+  level:
+    org.springframework: INFO
+    org.apache.camel.spring.boot: INFO
+    org.apache.camel.health: DEBUG
+    org.apache.camel.impl.health: DEBUG
+    org.springframework.web.client: DEBUG
+    org.apache.kafka: ERROR
+
